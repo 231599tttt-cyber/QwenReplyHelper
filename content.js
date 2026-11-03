@@ -362,6 +362,42 @@ window.__qrhLoaded = true;
   }
   async function attemptFillAsync(editor, text, isRegen, taskId) {
     const existing = (editor.innerText || editor.textContent || '').trim();
+    // Grok method test, from 1.7.3 only, style-switch only.
+    // First click keeps the 1.7.3 paste path (it works).
+    // Style switch does NOT clear-then-paste and does NOT use
+    // direct DOM write. It uses Grok's method 3 in one sequence:
+    // focus, put selection inside the inner text block at the end,
+    // execCommand insertText ' ' to wake the editor with a real
+    // native input, execCommand selectAll, execCommand insertText
+    // target text to replace the selection, then move the cursor
+    // to the end. No DOM removal, no manual InputEvent, no paste,
+    // no fallback. If the result is not exactly the target text,
+    // return false (empty/failure is honest, no dead text).
+    if (isRegen && existing) {
+      const setInnerEnd = () => {
+        try {
+          const sel = window.getSelection();
+          const range = document.createRange();
+          const textEls = editor.querySelectorAll('[data-text="true"]');
+          const inner = textEls.length ? textEls[textEls.length - 1] : null;
+          if (inner) range.selectNodeContents(inner); else range.selectNodeContents(editor);
+          range.collapse(false);
+          sel.removeAllRanges();
+          sel.addRange(range);
+        } catch (e) {}
+      };
+      try { editor.focus(); } catch (e) {}
+      setInnerEnd();
+      try { document.execCommand('insertText', false, ' '); } catch (e) {}
+      await new Promise(r => setTimeout(r, 100));
+      try { document.execCommand('selectAll', false, null); } catch (e) {}
+      try { document.execCommand('insertText', false, text); } catch (e) {}
+      await new Promise(r => setTimeout(r, 100));
+      setInnerEnd();
+      const afterGrok = (editor.innerText || editor.textContent || '').trim();
+      qrhLog('fill', taskId, 'GROK_SPACE_WAKE afterLen=' + afterGrok.length + ' textLen=' + text.trim().length);
+      return afterGrok === text.trim();
+    }
     if (existing) {
       try { editor.focus(); } catch (e) {}
       try { document.execCommand('selectAll', false, null); } catch (e) {}
