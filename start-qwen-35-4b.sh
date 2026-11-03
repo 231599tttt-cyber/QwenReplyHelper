@@ -2,8 +2,8 @@
 # QwenReplyHelper - Model B: old Qwen3.5-4B local service starter (macOS / Linux)
 # Run this on YOUR OWN computer. No VPS, no cloud.
 # This is the SECOND service: one llama-server loads only one model.
-# Model A (new, default) runs on port 8080 via start-qwen.sh.
-# Model B (old 4B) runs on port 8081 via THIS file.
+# Model A (new, default) runs on port 18080 via start-qwen.sh.
+# Model B (old 4B) runs on port 18081 via THIS file.
 # Normally run only ONE at a time: close the other terminal first,
 # because running both at once uses much more RAM.
 # 1) Put llama-server (plus its libraries from the same release folder)
@@ -17,7 +17,7 @@
 #    Model page: https://huggingface.co/bartowski/Qwen_Qwen3.5-4B-GGUF/tree/main
 #    Mirror page: https://hf-mirror.com/bartowski/Qwen_Qwen3.5-4B-GGUF/tree/main
 # 3) Run: sh start-qwen-35-4b.sh   (keep the terminal open while using Model B)
-#    Check readiness: open http://127.0.0.1:8081/health in a browser.
+#    Check readiness: open http://127.0.0.1:18081/health in a browser.
 set -e
 MODEL="Qwen_Qwen3.5-4B-Q4_K_M.gguf"
 if [ ! -f "$MODEL" ]; then
@@ -28,4 +28,4 @@ fi
 # If your llama-server build does not accept --reasoning off, remove that
 # flag and rerun: Chrome mode keeps thinking off for speed.
 # v1.2.2: if your build rejects --reasoning off, the manager (start-manager.sh) auto-retries without it; for manual single-model scripts, delete that parameter and re-run (the parameter is kept as-is here, so older builds that need it still work).
-./llama-server -m "$MODEL" --alias Qwen3.5-4B --host 127.0.0.1 --port 8081 -c 1024 -t 4 --reasoning off
+./llama-server -m "$MODEL" --alias Qwen3.5-4B --host 127.0.0.1 --port 18081 -c 1024 -t 4 --reasoning off

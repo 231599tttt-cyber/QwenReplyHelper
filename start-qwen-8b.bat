@@ -4,9 +4,9 @@ REM Backup only. Daily use: double-click start-manager.bat once; the
 REM manager owns llama-server and switches models with one tap.
 REM This script is for when the manager is not running.
 REM Run this on YOUR OWN computer. No VPS, no cloud.
-REM Model C (8B) runs on port 8082 via THIS file.
-REM Model A (new, default) runs on port 8080 via start-qwen.bat.
-REM Model B (old 4B) runs on port 8081 via start-qwen-35-4b.bat.
+REM Model C (8B) runs on port 18082 via THIS file.
+REM Model A (new, default) runs on port 18080 via start-qwen.bat.
+REM Model B (old 4B) runs on port 18081 via start-qwen-35-4b.bat.
 REM Normally run only ONE at a time: close the other black window first,
 REM because running several models at once uses much more RAM.
 REM 1) Put llama-server.exe (plus its DLLs from the same release folder)
@@ -25,7 +25,7 @@ REM    This script tries, in order: Q4_K_M, Q5_K_M, Q8_0, each with and
 REM    without the Qwen_ prefix, and uses the first file that exists.
 REM    Verify with: certutil -hashfile <filename> SHA256
 REM 3) Double-click this file. Keep the window open while using Model C.
-REM    Check readiness: open http://127.0.0.1:8082/health in a browser.
+REM    Check readiness: open http://127.0.0.1:18082/health in a browser.
 
 set MODEL=Qwen_Qwen3-8B-Q4_K_M.gguf
 if not exist "%MODEL%" (
@@ -37,7 +37,7 @@ if not exist "%MODEL%" (
 echo Using model file: %MODEL%
 
 REM v1.2.2: if your build rejects --reasoning off, the manager (start-manager.bat) auto-retries without it; for manual single-model scripts, delete that parameter and re-run (the parameter is kept as-is here, so older builds that need it still work).
-llama-server -m "%MODEL%" --alias Qwen3-8B --host 127.0.0.1 --port 8082 -c 1024 -t 4 --reasoning off
+llama-server -m "%MODEL%" --alias Qwen3-8B --host 127.0.0.1 --port 18082 -c 1024 -t 4 --reasoning off
 REM If your llama-server build does not accept --reasoning off, remove
 REM that flag and rerun: Chrome mode keeps thinking off for speed.
 pause

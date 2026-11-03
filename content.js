@@ -24,9 +24,9 @@ window.__qrhLoaded = true;
   // a missing button. Without the manager, the fallback is the
   // single-model scripts (see README/INSTALL).
   const MODELS = [
-    { id: 'new', label: '新模型 2.5GB', port: 8080, script: 'start-qwen.bat' },
-    { id: 'old4b', label: '旧 4B 3.01GB', port: 8081, script: 'start-qwen-35-4b.bat' },
-    { id: '8b', label: '8B 5.03GB', port: 8082, script: 'start-qwen-8b.bat' }
+    { id: 'new', label: '新模型 2.5GB', port: 18080, script: 'start-qwen.bat' },
+    { id: 'old4b', label: '旧 4B 3.01GB', port: 18081, script: 'start-qwen-35-4b.bat' },
+    { id: '8b', label: '8B 5.03GB', port: 18082, script: 'start-qwen-8b.bat' }
   ];
   let currentModel = 'new'; // default: new model
   let currentStyle = 'natural'; // default style, kept across posts

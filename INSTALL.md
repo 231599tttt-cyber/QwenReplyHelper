@@ -3,7 +3,7 @@
 ## 1.2.4 注意（端口被旧进程占着，不要同时开两个黑窗口）
 
 如果你双击 start-manager.bat 后看到“couldn't bind HTTP server socket”
-或“端口 8080 已被旧进程占用”，**不要再双击一次 start-manager，也不要
+或“端口 18080 已被旧进程占用”，**不要再双击一次 start-manager，也不要
 同时点 start-qwen 单脚本**，那样只会再起一个进程跟旧进程打架。
 先关掉所有管理器黑窗口；如果还报占用，就重启一次电脑，或者打开任务
 管理器 → 详细信息 → 找到 llama-server.exe → 结束任务，然后**只双击一次**
@@ -66,19 +66,19 @@ start-manager.bat。新版管理器如果发现该端口已经有一个健康服
 3. 日常启动：
    - Windows：双击 `start-manager.bat`，保持黑窗口开着。
    - macOS/Linux：`sh start-manager.sh`，保持终端开着。
-   管理器会自动先起默认新模型（8080）。以后不用再管两个脚本。
+   管理器会自动先起默认新模型（18080）。以后不用再管两个脚本。
 4. 验证：
    - 管理器：浏览器打开 http://127.0.0.1:8090/status ，能看到 current 是 2507 就是起来了。
-   - 新模型：打开 http://127.0.0.1:8080/health ，能返回内容即为已启动。
-   - 旧模型（切过去之后）：打开 http://127.0.0.1:8081/health 。
-   - 8B（切过去之后）：打开 http://127.0.0.1:8082/health 。
+   - 新模型：打开 http://127.0.0.1:18080/health ，能返回内容即为已启动。
+   - 旧模型（切过去之后）：打开 http://127.0.0.1:18081/health 。
+   - 8B（切过去之后）：打开 http://127.0.0.1:18082/health 。
    若扩展提示“管理器没在跑”，先检查这一步，不要先重装扩展。
 
 ## 二、备用启动（管理器没跑时才用）
 
-- 只起新模型：Windows 双击 `start-qwen.bat`，Mac/Linux 跑 `sh start-qwen.sh`（8080）。
-- 只起旧 4B：Windows 双击 `start-qwen-35-4b.bat`，Mac/Linux 跑 `sh start-qwen-35-4b.sh`（8081）。
-- 只起 8B：Windows 双击 `start-qwen-8b.bat`，Mac/Linux 跑 `sh start-qwen-8b.sh`（8082）。
+- 只起新模型：Windows 双击 `start-qwen.bat`，Mac/Linux 跑 `sh start-qwen.sh`（18080）。
+- 只起旧 4B：Windows 双击 `start-qwen-35-4b.bat`，Mac/Linux 跑 `sh start-qwen-35-4b.sh`（18081）。
+- 只起 8B：Windows 双击 `start-qwen-8b.bat`，Mac/Linux 跑 `sh start-qwen-8b.sh`（18082）。
 - 备用时要手动换模型：先关掉当前黑窗口，再双击另一个脚本，等对应端口就绪后，
   回工具条点“重新生成”。日常不要这样轮换，太麻烦，用第一步的管理器。
 

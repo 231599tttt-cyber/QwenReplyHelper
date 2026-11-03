@@ -1,6 +1,6 @@
 // QwenReplyHelper background service worker (Manifest V3).
-// Local-only: talks only to 127.0.0.1:8080 (Model A), 127.0.0.1:8081
-// (Model B), 127.0.0.1:8082 (Model C, 8B) and 127.0.0.1:8090
+// Local-only: talks only to 127.0.0.1:18080 (Model A), 127.0.0.1:18081
+// (Model B), 127.0.0.1:18082 (Model C, 8B) and 127.0.0.1:8090
 // (qwen-manager.py). One llama-server process loads only one model,
 // so one-tap switching needs the local manager (the extension sandbox
 // cannot start/stop a PC process).
@@ -14,50 +14,50 @@
 const MANAGER_URL = 'http://127.0.0.1:8090';
 const MANAGER_MODEL = { new: '2507', old4b: '35-4b', '8b': '8b' };
 const FALLBACK_SCRIPT = {
-  new: 'start-qwen.bat（Mac/Linux：start-qwen.sh，端口 8080）',
-  old4b: 'start-qwen-35-4b.bat（Mac/Linux：start-qwen-35-4b.sh，端口 8081）',
-  '8b': 'start-qwen-8b.bat（Mac/Linux：start-qwen-8b.sh，端口 8082）'
+  new: 'start-qwen.bat（Mac/Linux：start-qwen.sh，端口 18080）',
+  old4b: 'start-qwen-35-4b.bat（Mac/Linux：start-qwen-35-4b.sh，端口 18081）',
+  '8b': 'start-qwen-8b.bat（Mac/Linux：start-qwen-8b.sh，端口 18082）'
 };
 'use strict';
 
 // Model A (default, main): Qwen3-4B-Instruct-2507 Q4_K_M, ~2.50GB.
-// Start: start-qwen.bat / start-qwen.sh -> 127.0.0.1:8080
+// Start: start-qwen.bat / start-qwen.sh -> 127.0.0.1:18080
 // Model B (old 4B): Qwen3.5-4B Q4_K_M, ~3.01GB.
-// Start: start-qwen-35-4b.bat / start-qwen-35-4b.sh -> 127.0.0.1:8081
+// Start: start-qwen-35-4b.bat / start-qwen-35-4b.sh -> 127.0.0.1:18081
 // Model C (8B, v1.2.0): Qwen3-8B Q4_K_M (recommended), ~5.03GB.
 // Qwen released no separate Qwen3-8B-Instruct-2507, so this is the
 // original Qwen3-8B, forced reasoning off for Chrome speed, like the
 // other two. Manager tries Q4_K_M, then Q5_K_M (~5.85GB), then Q8_0
 // (~8.71GB) filenames, with or without the Qwen_ prefix (see
 // qwen-manager.py). Start via manager, or backup:
-// start-qwen-8b.bat / start-qwen-8b.sh -> 127.0.0.1:8082
+// start-qwen-8b.bat / start-qwen-8b.sh -> 127.0.0.1:18082
 const MODELS = {
   new: {
     id: 'new',
     label: '新模型 2.5GB',
     alias: 'Qwen3-4B-Instruct-2507',
-    url: 'http://127.0.0.1:8080/v1/chat/completions',
-    port: 8080,
+    url: 'http://127.0.0.1:18080/v1/chat/completions',
+    port: 18080,
     script: 'start-qwen.bat（Mac/Linux：start-qwen.sh）',
-    missing: '新模型服务未启动：请双击 start-qwen.bat（Mac/Linux：start-qwen.sh），等 8080 就绪后再生成。'
+    missing: '新模型服务未启动：请双击 start-qwen.bat（Mac/Linux：start-qwen.sh），等 18080 就绪后再生成。'
   },
   old4b: {
     id: 'old4b',
     label: '旧 4B 3.01GB',
     alias: 'Qwen3.5-4B',
-    url: 'http://127.0.0.1:8081/v1/chat/completions',
-    port: 8081,
+    url: 'http://127.0.0.1:18081/v1/chat/completions',
+    port: 18081,
     script: 'start-qwen-35-4b.bat（Mac/Linux：start-qwen-35-4b.sh）',
-    missing: '旧 4B 服务未启动：请双击 start-qwen-35-4b.bat（Mac/Linux：start-qwen-35-4b.sh），等 8081 就绪后再生成。'
+    missing: '旧 4B 服务未启动：请双击 start-qwen-35-4b.bat（Mac/Linux：start-qwen-35-4b.sh），等 18081 就绪后再生成。'
   },
   '8b': {
     id: '8b',
     label: '8B 5.03GB',
     alias: 'Qwen3-8B',
-    url: 'http://127.0.0.1:8082/v1/chat/completions',
-    port: 8082,
+    url: 'http://127.0.0.1:18082/v1/chat/completions',
+    port: 18082,
     script: 'start-qwen-8b.bat（Mac/Linux：start-qwen-8b.sh）',
-    missing: '8B 服务未启动：请先确认管理器已起（start-manager.bat），并把 8B 模型文件（推荐 Qwen3-8B-Q4_K_M.gguf，约 5.03GB）放进 QwenReplyHelper 文件夹；或双击 start-qwen-8b.bat（Mac/Linux：start-qwen-8b.sh），等 8082 就绪后再生成。'
+    missing: '8B 服务未启动：请先确认管理器已起（start-manager.bat），并把 8B 模型文件（推荐 Qwen3-8B-Q4_K_M.gguf，约 5.03GB）放进 QwenReplyHelper 文件夹；或双击 start-qwen-8b.bat（Mac/Linux：start-qwen-8b.sh），等 18082 就绪后再生成。'
   }
 };
 

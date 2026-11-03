@@ -724,3 +724,9 @@ Method: Node + jsdom, real content.js against mock-x.html, stubbed chrome.runtim
 ## v1.7.2 — Comments neutralised, no functional change (user 13:28, from 1.7.1)
 - Only wording changed: other-AI names in content.js comments and TEST-REPORT.md headings changed to neutral "问题 3 / 问题 4 / 问题 1+2 / 外部建议 / 6 个问题". No attribution to WorkBuddy added, no code logic changed, paste fill from 1.7.1 unchanged.
 - Prompt unchanged, box finding unchanged, fill method unchanged. Version 1.7.2.
+
+## v1.7.3 — All three model ports moved to uncommon ports, no functional change (user 16:13, from 1.7.2)
+- Root cause found 2026-11-03: ApplicationWebServer.exe (NI, National Instruments, Services session 0, auto-starts on boot) holds local 8080, so manager auto-starting new model on 8080 always reported occupied, every boot, even after restart, and Task Manager showed no llama-server.exe. 8080 is a very common default port.
+- Fix: new model 8080 -> 18080, old 4B 8081 -> 18081, 8B 8082 -> 18082, in background.js, content.js, qwen-manager.py, start-qwen*.bat/sh, README.md, INSTALL.md. Manager port stays 8090 (already working on user's PC). Prompt unchanged, paste fill from 1.7.1/1.7.2 unchanged, model files unchanged.
+- After update: close all manager windows, overwrite extension folder (do NOT delete .gguf files), reload extension to 1.7.3, double-click start-manager ONCE, check http://127.0.0.1:18080/health for new model. NI service keeps 8080, no conflict.
+- Version 1.7.3.

@@ -1,7 +1,7 @@
 @echo off
 REM QwenReplyHelper manager - DAILY USE, double-click this once (Windows)
 REM This is the only black window you normally need. It auto-starts the
-REM default model (2507, port 8080) and lets the X toolbar switch models
+REM default model (2507, port 18080) and lets the X toolbar switch models
 REM with one click, like the phone app: it kills the old llama-server
 REM and starts the new one for you. Keep this window open.
 REM Manager API: http://127.0.0.1:8090/status (local only)

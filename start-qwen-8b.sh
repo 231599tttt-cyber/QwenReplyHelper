@@ -3,9 +3,9 @@
 # Backup only. Daily use: sh start-manager.sh once; the manager owns
 # llama-server and switches models with one tap.
 # Run this on YOUR OWN computer. No VPS, no cloud.
-# Model C (8B) runs on port 8082 via THIS file.
-# Model A (new, default) runs on port 8080 via start-qwen.sh.
-# Model B (old 4B) runs on port 8081 via start-qwen-35-4b.sh.
+# Model C (8B) runs on port 18082 via THIS file.
+# Model A (new, default) runs on port 18080 via start-qwen.sh.
+# Model B (old 4B) runs on port 18081 via start-qwen-35-4b.sh.
 # Normally run only ONE at a time: close the other terminal first,
 # because running several models at once uses much more RAM.
 # 1) Put llama-server (plus its libraries from the same release folder)
@@ -22,7 +22,7 @@
 #    This script tries, in order: Q4_K_M, Q5_K_M, Q8_0, each with and
 #    without the Qwen_ prefix, and uses the first file that exists.
 # 3) Run: sh start-qwen-8b.sh   (keep the terminal open while using Model C)
-#    Check readiness: open http://127.0.0.1:8082/health in a browser.
+#    Check readiness: open http://127.0.0.1:18082/health in a browser.
 set -e
 MODEL="Qwen_Qwen3-8B-Q4_K_M.gguf"
 if [ ! -f "$MODEL" ]; then
@@ -34,4 +34,4 @@ echo "Using model file: $MODEL"
 # If your llama-server build does not accept --reasoning off, remove that
 # flag and rerun: Chrome mode keeps thinking off for speed.
 # v1.2.2: if your build rejects --reasoning off, the manager (start-manager.sh) auto-retries without it; for manual single-model scripts, delete that parameter and re-run (the parameter is kept as-is here, so older builds that need it still work).
-./llama-server -m "$MODEL" --alias Qwen3-8B --host 127.0.0.1 --port 8082 -c 1024 -t 4 --reasoning off
+./llama-server -m "$MODEL" --alias Qwen3-8B --host 127.0.0.1 --port 18082 -c 1024 -t 4 --reasoning off

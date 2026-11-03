@@ -13,7 +13,7 @@ Daily use (the only black window you need):
   Windows:   double-click start-manager.bat
   Mac/Linux: sh start-manager.sh
   Then keep that window open. It auto-starts the default model (2507)
-  on 127.0.0.1:8080. Clicking a model button in the X reply toolbar
+  on 127.0.0.1:18080. Clicking a model button in the X reply toolbar
   then just switches, no manual script juggling.
 
 API (127.0.0.1:8090 only, never exposed to the network):
@@ -28,8 +28,8 @@ API (127.0.0.1:8090 only, never exposed to the network):
                      previous model is NOT silently left half-started.
 
 Fallback (manager not running): the single-model scripts
-start-qwen.bat/.sh (2507, port 8080), start-qwen-35-4b.bat/.sh
-(35-4b, port 8081) and start-qwen-8b.bat/.sh (8b, port 8082)
+start-qwen.bat/.sh (2507, port 18080), start-qwen-35-4b.bat/.sh
+(35-4b, port 18081) and start-qwen-8b.bat/.sh (8b, port 18082)
 still work. The extension then tells the user exactly which one
 to double-click. See README.md / INSTALL.md.
 
@@ -65,7 +65,7 @@ v1.2.2 --reasoning auto-fallback (real Windows bug, llama.cpp b12038):
 
 v1.2.3 port-in-use adopt (real user report: windows closed, yet a
 new start-manager still failed with "couldn't bind HTTP server
-socket, hostname: 127.0.0.1, port: 8080"):
+socket, hostname: 127.0.0.1, port: 18080"):
   Closing a black window does NOT guarantee the old llama-server
   is dead: an orphan from a previous manager run, or a second
   manager instance, can still hold the port. The old code then
@@ -116,7 +116,7 @@ MODELS = {
         "label": "新模型 2.5GB",
         "file": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
         "alias": "Qwen3-4B-Instruct-2507",
-        "port": 8080,
+        "port": 18080,
         "size": 2497280736,
         "sha256": "2fde00ce69dd4899c70d020845e2638353015bba0fdf161b3eb965f2bca4464e",
         "script": "start-qwen.bat",
@@ -127,7 +127,7 @@ MODELS = {
         "label": "旧 4B 3.01GB",
         "file": "Qwen_Qwen3.5-4B-Q4_K_M.gguf",
         "alias": "Qwen3.5-4B",
-        "port": 8081,
+        "port": 18081,
         "size": 3013027808,
         "sha256": "13c16f426047e2de38cd075bdade4a7bcbc8c774384876f677740cda65f8a983",
         "script": "start-qwen-35-4b.bat",
@@ -145,7 +145,7 @@ MODELS = {
         "label": "8B 5.03GB",
         "file": "Qwen_Qwen3-8B-Q4_K_M.gguf",
         "alias": "Qwen3-8B",
-        "port": 8082,
+        "port": 18082,
         "size_label": "约 5.03GB（Q4_K_M；Q5_K_M 约 5.85GB，Q8_0 约 8.71GB）",
         "page": "https://huggingface.co/bartowski/Qwen_Qwen3-8B-GGUF/tree/main",
         "mirror_page": "https://hf-mirror.com/bartowski/Qwen_Qwen3-8B-GGUF/tree/main",
