@@ -201,7 +201,7 @@ window.__qrhLoaded = true;
   }
 
   function findComposerEditor() {
-    // ChatGPT problem 3 (from 1.6.2): previously returned the FIRST
+    // 问题 3 (from 1.6.2): previously returned the FIRST
     // dialog in the page, without confirming it belongs to the
     // clicked post. Author-only check passes when two posts share
     // an author. Now: if a post is pending, only return an editor
@@ -656,7 +656,7 @@ window.__qrhLoaded = true;
       b.addEventListener('click', (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
-        // ChatGPT problem 4: during model switch, style clicks must
+        // 问题 4: during model switch, style clicks must
         // NOT generate against the old (being killed) model.
         if (toolbarSwitching) { setStatus('正在切换模型，请等切换完成再选风格。', false); return; }
         currentStyle = s.id;
@@ -800,7 +800,7 @@ window.__qrhLoaded = true;
   }
 
 
-  // DOM identification (user 23:12, ChatGPT suggestion, from 1.6.0):
+  // DOM identification (user 23:12, from 1.6.0):
   // Do NOT identify a reply box by its text ("Replying to" / "回复 @").
   // Text changes with language/UI. Identify by DOM structure only:
   // a reply box lives inside div[role="dialog"] that contains a
@@ -1029,7 +1029,7 @@ window.__qrhLoaded = true;
     const model = currentModel || 'new';
 
     qrhLog('click', null, 'bubble postId=' + postId + ' style=' + style + ' model=' + model);
-    // ChatGPT problems 1+2 (from 1.6.2): previously the old task was
+    // 问题 1+2 (from 1.6.2): previously the old task was
     // only invalidated AFTER waitForComposer (up to 5s later), and
     // generating=true was only set after the box opened. So a second
     // click before the box opened, or an old task returning before
@@ -1058,7 +1058,7 @@ window.__qrhLoaded = true;
       return;
     }
 
-    // Post-match guard (ChatGPT problem 3): author alone is not
+    // Post-match guard (问题 3): author alone is not
     // enough — two posts by the same author share an author.
     // The dialog's own postId/postText must match the clicked post.
     const clickedAuthor = extractAuthorHandle(article);

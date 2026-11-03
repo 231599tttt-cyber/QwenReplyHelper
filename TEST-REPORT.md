@@ -661,11 +661,11 @@ Method: Node + jsdom, real content.js against mock-x.html, stubbed chrome.runtim
 - Do NOT re-apply 1.6.1 prompt changes in future versions without user instruction.
 
 ## v1.6.2 — DOM identification, not text identification (user 23:12, from 1.6.0)
-- ChatGPT suggestion, user approved: previously reply boxes were identified by text ("Replying to" / "回复 @"), which breaks with language/UI changes.
+- 外部建议, user approved: previously reply boxes were identified by text ("Replying to" / "回复 @"), which breaks with language/UI changes.
 - Fix from 1.6.0: isReplyDialogText removed. New isReplyDialogEl checks DOM only: dialog role="dialog" + contains tweetTextarea_0. Top composer is not in a dialog, so it is never selected. Author is read from the dialog's own article DOM header link (dialogAuthorHandle), not from "Replying to" text.
 - Applied to findEditorHolding, findVisibleReplyEditor, isReplyEditor, and bubble wrong-person guard. No prompt change, no other function change. Current version is 1.6.2, based on 1.6.0 (1.6.1 remains void).
 
-## v1.6.3 — ChatGPT 6 problems, from 1.6.2 (DOM version, prompt unchanged)
+## v1.6.3 — 6 个问题, from 1.6.2 (DOM version, prompt unchanged)
 - Problem 1 (old task pollutes new task): bubble click now increments generationSeq, clears pendingFill, cancels old, and sets state.taskId IMMEDIATELY at click time, before await waitForComposer. generateAndFill reuses that click taskId for first click, instead of creating a new one after the box opens. Old callbacks (myTaskId !== state.taskId) are rejected instantly.
 - Problem 2 (continuous clicks double AI): bubble click now sets state.pending=true immediately. Same post while pending/generating is ignored. Second click before the box opens no longer passes the check.
 - Problem 3 (reply box misidentified by author only): findComposerEditor now iterates all dialogs and only returns an editor from a dialog whose postId (or postText) matches the clicked post. Bubble handler also verifies dialog postId/postText, not just author. Two posts by the same author no longer pass.
@@ -720,3 +720,7 @@ Method: Node + jsdom, real content.js against mock-x.html, stubbed chrome.runtim
 - Fix, shared method only: new async fillViaPaste used by attemptFillAsync for both first click and style switch: focus, selection inside innermost [data-text="true"] if present, dispatch ClipboardEvent paste with DataTransfer text/plain, wait 100ms, verify head present, else fallback once to fillEditor execCommand so text still appears. No system clipboard, no clipboard permission, single local event (tens of ms, same speed as execCommand; AI generation seconds still dominate).
 - Dead synchronous attemptFill left on execCommand (no callers), to avoid changing its sync signature.
 - Prompt unchanged, box finding unchanged, clear-before-fill unchanged, duplicate-after-exec check unchanged. Version 1.7.1.
+
+## v1.7.2 — Comments neutralised, no functional change (user 13:28, from 1.7.1)
+- Only wording changed: other-AI names in content.js comments and TEST-REPORT.md headings changed to neutral "问题 3 / 问题 4 / 问题 1+2 / 外部建议 / 6 个问题". No attribution to WorkBuddy added, no code logic changed, paste fill from 1.7.1 unchanged.
+- Prompt unchanged, box finding unchanged, fill method unchanged. Version 1.7.2.
