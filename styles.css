@@ -1,0 +1,153 @@
+/* QwenReplyHelper toolbar only. Scoped qrh- classes, no X layout changes.
+   v1.2.1: clean card, pill buttons, visible disabled state, spinner dot.
+   v1.2.4: purple theme — the old near-white card blended into X's white
+   interface. The card is now a light purple tint with a purple border,
+   so it stands out at a glance, while text stays dark and readable
+   on both light and dark X pages (the card itself supplies the
+   background; it does not rely on the page colour). */
+.qrh-toolbar {
+  box-sizing: border-box;
+  display: block;
+  /* v1.2.4: floating card, NOT in-flow inside X's composer dialog.
+     X's dialog itself is fixed at top-center and is not draggable,
+     so an in-flow toolbar looked stuck at the top-middle. A fixed
+     body-appended card can be dragged anywhere instead.
+     v1.2.5: persistent card, default bottom-right (right 20px,
+     bottom 20px, set as left/top in px by content.js so dragging
+     works). It appears on X load in idle state and is never
+     repositioned by a reply click, a generation, or a switch —
+     only a header drag moves it. */
+  position: fixed;
+  z-index: 2147483647;
+  width: 520px;
+  max-width: 90vw;
+  margin: 0;
+  padding: 12px 14px 10px;
+  border: 1px solid #c4b5fd;
+  border-radius: 14px;
+  background: #f5f3ff;
+  box-shadow: 0 8px 28px rgba(124, 58, 237, 0.22);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #111827;
+}
+.qrh-toolbar.qrh-dragging {
+  box-shadow: 0 12px 32px rgba(124, 58, 237, 0.3);
+}
+.qrh-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd6fe;
+  /* v1.2.4 drag handle: only this row drags the card. Buttons are
+     outside the header, so dragging never swallows a button click. */
+  cursor: grab;
+  user-select: none;
+}
+.qrh-toolbar.qrh-dragging .qrh-header {
+  cursor: grabbing;
+}
+.qrh-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #7c3aed;
+}
+.qrh-badge {
+  font-size: 12px;
+  color: #5b21b6;
+  background: #ede9fe;
+  border: 1px solid #c4b5fd;
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+.qrh-model-row,
+.qrh-style-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.qrh-row-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b21a8;
+  margin-right: 2px;
+  white-space: nowrap;
+}
+.qrh-model-note {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.4;
+  flex-basis: 100%;
+}
+.qrh-btn {
+  cursor: pointer;
+  border: 1px solid #c4b5fd;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #111827;
+  padding: 6px 13px;
+  font-size: 13px;
+  line-height: 1.4;
+  transition: background 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+.qrh-btn:hover:not(:disabled) {
+  border-color: #7c3aed;
+  background: #ede9fe;
+}
+.qrh-btn:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 2px;
+}
+.qrh-btn.qrh-active {
+  background: #7c3aed;
+  border-color: #7c3aed;
+  color: #ffffff;
+}
+.qrh-btn.qrh-active:hover:not(:disabled) {
+  background: #6d28d9;
+}
+.qrh-btn.qrh-regen {
+  border-style: dashed;
+  font-weight: 600;
+}
+.qrh-btn:disabled,
+.qrh-btn.qrh-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.qrh-toolbar.qrh-switching .qrh-btn {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.qrh-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #334155;
+  font-size: 12px;
+  line-height: 1.4;
+  min-height: 18px;
+}
+.qrh-status-dot {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #94a3b8;
+}
+.qrh-status.qrh-busy .qrh-status-dot {
+  background: #8b5cf6;
+  animation: qrh-pulse 1s ease-in-out infinite;
+}
+@keyframes qrh-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.55; }
+}

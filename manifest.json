@@ -1,0 +1,35 @@
+{
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "css": [
+        "styles.css"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "matches": [
+        "https://x.com/*",
+        "https://twitter.com/*"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "description": "Click X reply icon, local Qwen (127.0.0.1:8080 new model / 127.0.0.1:8081 old 4B / 127.0.0.1:8082 8B) generates a reply and fills X's native reply box. Second click on Reply publishes. No cloud AI.",
+  "host_permissions": [
+    "https://x.com/*",
+    "https://twitter.com/*",
+    "http://127.0.0.1:8080/*",
+    "http://127.0.0.1:8081/*",
+    "http://127.0.0.1:8082/*",
+    "http://127.0.0.1:8090/*"
+  ],
+  "manifest_version": 3,
+  "name": "QwenReplyHelper",
+  "permissions": [
+    "storage"
+  ],
+  "version": "1.6.7"
+}

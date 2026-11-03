@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QwenReplyHelper mock X page (for testing only, not real X)</title>
+<style>
+body { font-family: system-ui, sans-serif; margin: 24px; }
+article { border: 1px solid #ccc; border-radius: 12px; padding: 12px; margin: 12px 0; max-width: 600px; }
+.qrh-dialog { border: 1px solid #1d9bf0; border-radius: 12px; padding: 12px; margin: 12px 0; max-width: 600px; }
+#composer { min-height: 60px; border: 1px solid #999; border-radius: 8px; padding: 8px; }
+button { cursor: pointer; }
+</style>
+</head>
+<body>
+<h1>Mock X timeline</h1>
+<p>This page simulates X structure only: article[data-testid="tweet"],
+div[data-testid="tweetText"], button[data-testid="reply"], and a reply
+dialog with div[data-testid="tweetTextarea_0"]. It is NOT real X.</p>
+
+<article data-testid="tweet">
+  <div><a href="/someone/status/1234567890">post link</a></div>
+  <div data-testid="tweetText">为什么国产手机都强制要求内置反诈功能</div>
+  <button data-testid="reply" type="button">Reply icon (mock)</button>
+  <div>评论区内容（不应被读取）：这是一条评论，不是主帖。</div>
+</article>
+
+<article data-testid="tweet">
+  <div><a href="/other/status/987654321">post link</a></div>
+  <div data-testid="tweetText">今天天气真好，适合出去走走</div>
+  <button data-testid="reply" type="button">Reply icon (mock)</button>
+</article>
+
+<div id="dialog-host"></div>
+
+<script>
+// Mock X behaviour: clicking a reply icon opens a composer dialog.
+document.querySelectorAll('button[data-testid="reply"]').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    var host = document.getElementById('dialog-host');
+    if (host.querySelector('div[role="dialog"]')) return;
+    var dialog = document.createElement('div');
+    dialog.setAttribute('role', 'dialog');
+    dialog.className = 'qrh-dialog';
+    dialog.innerHTML = '<p>Reply composer (mock)</p>' +
+      '<div data-testid="tweetTextarea_0" contenteditable="true" role="textbox" aria-label="Post text"></div>' +
+      '<button type="button" data-testid="reply-submit">Reply</button>';
+    host.appendChild(dialog);
+  });
+});
+</script>
+</body>
+</html>
