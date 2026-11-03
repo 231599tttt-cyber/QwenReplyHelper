@@ -262,10 +262,27 @@ window.__qrhLoaded = true;
     // falls back once. This function itself now NEVER writes twice.
     const head = text.slice(0, 10);
     try { editor.focus(); } catch (e) {}
+    // 1.7.0 (user 12:42, from 1.6.8): 1.6.8 put the selection at the
+    // END OF THE WHOLE EDITOR (selectNodeContents(editor)), then
+    // execCommand inserted text there. X's editor tracks text inside
+    // its inner text block ([data-text="true"] span), not at the
+    // outer end, so the text displayed and Reply lit up, but X's
+    // block stayed empty and Backspace did nothing until the user
+    // typed a real character and X re-read the box. Fix: put the
+    // selection INSIDE the innermost text block first, so
+    // execCommand inserts into the block X actually tracks.
+    // 1.6.9 space-activate hack is removed (proven useless: a space,
+    // manual or coded, does not activate Backspace).
     try {
       const sel = window.getSelection();
       const range = document.createRange();
-      range.selectNodeContents(editor);
+      const textEls = editor.querySelectorAll('[data-text="true"]');
+      const inner = textEls.length ? textEls[textEls.length - 1] : null;
+      if (inner) {
+        range.selectNodeContents(inner);
+      } else {
+        range.selectNodeContents(editor);
+      }
       range.collapse(false);
       sel.removeAllRanges();
       sel.addRange(range);
@@ -274,7 +291,11 @@ window.__qrhLoaded = true;
     try { inserted = document.execCommand('insertText', false, text); } catch (e) { inserted = false; }
     const afterFirst = (editor.innerText || editor.textContent || '');
     if (afterFirst.includes(head)) {
-      try { editor.dispatchEvent(new InputEvent('input', { bubbles: true, cancelable: true })); } catch (e) {}
+      // 1.6.8: NO manual InputEvent here. execCommand insertText
+      // already fires a native input event; a second manual one
+      // on a fresh dialog was a candidate for X duplicating the
+      // text, while still being needed to enable Reply in the
+      // direct-DOM path (which is now gone on first click).
       return true;
     }
     // Do NOT fallback here. Return false and let attemptFillAsync
@@ -301,6 +322,44 @@ window.__qrhLoaded = true;
     try { editor.dispatchEvent(new InputEvent('input', { bubbles: true, cancelable: true })); } catch (e) {}
     return (editor.innerText || editor.textContent || '').includes(head);
   }
+
+  // 1.7.1 (user 12:49, shared fill method): execCommand insertText
+  // left X's block unadopted for BOTH first click and style switch
+  // (user 12:45: style switch also Backspace-dead), so changing only
+  // first-click path (1.6.8/1.6.9/1.7.0) could never fix it. Shared
+  // method now: dispatch a synthetic ClipboardEvent paste with a
+  // DataTransfer carrying the text, directly to the editor. X's
+  // paste handler treats this as user-pasted text and adopts it
+  // into its own editor model, so Backspace should work without
+  // manual typing. No system clipboard use, no clipboard permission,
+  // no extra copy step: paste dispatch is a single local event,
+  // tens of ms, same speed as execCommand; AI generation time
+  // (seconds) still dominates. If paste dispatch inserts nothing
+  // within 100ms, fall back once to fillEditor execCommand so text
+  // still appears (with the old Backspace limitation, not blank).
+  async function fillViaPaste(editor, text) {
+    const head = text.slice(0, 10);
+    try { editor.focus(); } catch (e) {}
+    try {
+      const sel = window.getSelection();
+      const range = document.createRange();
+      const textEls = editor.querySelectorAll('[data-text="true"]');
+      const inner = textEls.length ? textEls[textEls.length - 1] : null;
+      if (inner) range.selectNodeContents(inner); else range.selectNodeContents(editor);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    } catch (e) {}
+    try {
+      const dt = new DataTransfer();
+      dt.setData('text/plain', text);
+      const ev = new ClipboardEvent('paste', { bubbles: true, cancelable: true, clipboardData: dt });
+      editor.dispatchEvent(ev);
+    } catch (e) {}
+    await new Promise(r => setTimeout(r, 100));
+    if ((editor.innerText || editor.textContent || '').includes(head)) return true;
+    return fillEditor(editor, text);
+  }
   async function attemptFillAsync(editor, text, isRegen, taskId) {
     const existing = (editor.innerText || editor.textContent || '').trim();
     if (existing) {
@@ -317,28 +376,30 @@ window.__qrhLoaded = true;
     qrhLog('write', taskId, 'attemptFillAsync isRegen=' + isRegen + ' existingLen=' + existing.length);
     let filled;
     if (!isRegen) {
-      // 1.6.7 (user 11:18, first-click direction only): freshly
-      // opened dialog is unstable; execCommand insertText + manual
-      // InputEvent lets X duplicate the text. First click therefore
-      // uses DIRECT DOM insertion only (Range+TextNode, no
-      // execCommand), then exactly ONE InputEvent to light up Reply.
-      // Style switch (isRegen=true) keeps execCommand, which already
-      // works on a settled editor.
-      try { editor.focus(); } catch (e) {}
-      filled = fillEditorFallback(editor, text);
-      // Wait for X to settle, then verify once. If X duplicated
-      // after the single direct insert, clear and insert once more
-      // via the same direct method (not execCommand).
+      // 1.6.8 (user 12:17, standard: single text + Reply enabled +
+      // actually sendable): 1.6.7 direct DOM insert made text single
+      // but X never enabled Reply, so it was NOT a fix. Revert first
+      // click to execCommand, which X recognises and which enables
+      // Reply. Duplication is then handled AFTER execCommand, not
+      // by avoiding execCommand: wait 200ms for X to settle, if
+      // content is exactly text+text, clear via execCommand
+      // selectAll+delete, then execCommand insertText ONCE more.
+      // No direct DOM insert on first click, no manual InputEvent
+      // after a direct insert, so Reply stays enabled.
+      filled = await fillViaPaste(editor, text);
       await new Promise(r => setTimeout(r, 200));
-      let afterDirect = (editor.innerText || editor.textContent || '').trim();
-      if (afterDirect === (text.trim() + text.trim())) {
-        qrhLog('fill', taskId, 'FIRST_CLICK_DUP_AFTER_DIRECT, clearing to single');
-        try { while (editor.firstChild) editor.removeChild(editor.firstChild); } catch (e) {}
-        filled = fillEditorFallback(editor, text);
+      let afterExec = (editor.innerText || editor.textContent || '').trim();
+      if (afterExec === (text.trim() + text.trim())) {
+        qrhLog('fill', taskId, 'FIRST_CLICK_DUP_AFTER_EXEC, clearing and execCommand once more');
+        try { editor.focus(); } catch (e) {}
+        try { document.execCommand('selectAll', false, null); } catch (e) {}
+        try { document.execCommand('delete', false, null); } catch (e) {}
+        await new Promise(r => setTimeout(r, 100));
+        filled = await fillViaPaste(editor, text);
         await new Promise(r => setTimeout(r, 200));
       }
     } else {
-      filled = fillEditor(editor, text);
+      filled = await fillViaPaste(editor, text);
       if (!filled) {
         await new Promise(r => setTimeout(r, 120));
         const afterWait = (editor.innerText || editor.textContent || '');

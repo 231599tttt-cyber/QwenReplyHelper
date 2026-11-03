@@ -696,3 +696,27 @@ Method: Node + jsdom, real content.js against mock-x.html, stubbed chrome.runtim
 - Fix, first click only: attemptFillAsync for isRegen=false uses fillEditorFallback (Range+TextNode direct DOM) only, no execCommand, then one InputEvent (inside fallback), then 200ms settle check. If after that check content is exactly text+text, clear editor and direct-insert once more, then re-check.
 - Style switch (isRegen=true) unchanged: execCommand path from 1.6.6, which already works on settled editor.
 - Prompt unchanged, box finding unchanged. Version 1.6.7.
+
+## v1.6.8 — Revert first-click to execCommand, Reply must enable (user 12:17, from 1.6.7)
+- User retest: 1.6.7 made text single but Reply stayed grey for EVERY bubble click, cannot send at all. So 1.6.7 was NOT a fix. Standard for a real fix: single text + Reply enabled + actually sendable, for any person.
+- Fix: first click back to fillEditor execCommand (X recognises it, Reply enables). No direct DOM insert on first click. fillEditor no longer dispatches a manual InputEvent after execCommand success (execCommand already fires native input; manual second input was a duplication candidate on fresh dialog).
+- After execCommand, wait 200ms for X to settle; if content is exactly text+text, clear via execCommand selectAll+delete, then execCommand insertText once more, then re-verify. This handles duplication after execCommand without breaking Reply.
+- Prompt unchanged, box finding unchanged, style switch unchanged. Version 1.6.8.
+
+## v1.6.9 — Activate X draft after fill, Backspace without manual typing (user 12:31, from 1.6.8)
+- User discovery: after fill, cursor moves and typing works, but Backspace cannot delete generated text until user types one character manually, after which Backspace works for everything. X confirms draft only on a real user input.
+- Fix, fill step only: new activateEditorDraft runs after verified fill: focus, cursor at end, execCommand insertText ' ' (real editing transaction X processes), then execCommand delete it back, plus one InputEvent with inputType insertText. Net text unchanged, but X draft is activated, so Backspace/typing/deleting work without manual typing.
+- User rule: X confirmation must NOT require manual typing. This implements that in code.
+- Prompt unchanged, box finding unchanged, first-click execCommand path unchanged, style switch unchanged. Version 1.6.9.
+
+## v1.7.0 — Fill inside X inner text block, Backspace without manual typing (user 12:42, from 1.6.8, NOT 1.6.9)
+- Root cause in 1.6.8 fillEditor: selection was selectNodeContents(editor) collapse(false) = end of whole editor, then execCommand insertText there. X tracks text inside its inner [data-text="true"] block, not outer end, so text displayed and Reply lit up, but X block stayed empty and Backspace did nothing until user typed a real character and X re-read the box. Conclusion confirmed by user: generated text present, Backspace no reaction, after typing any character Backspace recovers and can delete all.
+- Fix, fill step only: selection is now inside the innermost [data-text="true"] element if present, else whole editor fallback, then execCommand insertText. No other fill change.
+- 1.6.9 space-activate hack removed (proven useless: manual space also does not activate Backspace). Working base is 1.6.8, not 1.6.9.
+- Prompt unchanged, box finding unchanged, style switch path unchanged except it shares fillEditor, so it also benefits. Version 1.7.0.
+
+## v1.7.1 — Shared fill via ClipboardEvent paste, Backspace without manual typing (user 12:49, from 1.7.0)
+- User confirmed 12:45: style switch also Backspace-dead, so shared fillEditor execCommand is the common fault, not first-click path alone. 1.6.8/1.6.9/1.7.0 only changed first-click/post-fill, could never fix style switch.
+- Fix, shared method only: new async fillViaPaste used by attemptFillAsync for both first click and style switch: focus, selection inside innermost [data-text="true"] if present, dispatch ClipboardEvent paste with DataTransfer text/plain, wait 100ms, verify head present, else fallback once to fillEditor execCommand so text still appears. No system clipboard, no clipboard permission, single local event (tens of ms, same speed as execCommand; AI generation seconds still dominate).
+- Dead synchronous attemptFill left on execCommand (no callers), to avoid changing its sync signature.
+- Prompt unchanged, box finding unchanged, clear-before-fill unchanged, duplicate-after-exec check unchanged. Version 1.7.1.
