@@ -112,7 +112,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   if (msg.type === 'switch-model') {
     // One-tap switch via the local manager. Loading takes tens of
     // seconds; wait for the manager's /health-gated reply (up to 190s).
-    const target = MODELS[msg.model] ? msg.model : 'new';
+    const target = MODELS[msg.model] ? msg.model : '8b';
     const managerId = MANAGER_MODEL[target];
     const controller = new AbortController();
     const timer = setTimeout(() => { try { controller.abort(); } catch (e) {} }, 190000);
@@ -153,7 +153,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 
   if (msg.type !== 'generate') return false;
 
-  const model = MODELS[msg.model] || MODELS.new;
+  const model = MODELS[msg.model] || MODELS['8b'];
   const style = PROMPTS[msg.style] ? msg.style : 'natural';
   const postText = String(msg.postText || '').trim();
   if (!postText) {

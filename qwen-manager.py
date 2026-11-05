@@ -12,8 +12,8 @@ Why this file exists, honestly:
 Daily use (the only black window you need):
   Windows:   double-click start-manager.bat
   Mac/Linux: sh start-manager.sh
-  Then keep that window open. It auto-starts the default model (2507)
-  on 127.0.0.1:18080. Clicking a model button in the X reply toolbar
+  Then keep that window open. It auto-starts the default model (8B)
+  on 127.0.0.1:18082. Clicking a model button in the X reply toolbar
   then just switches, no manual script juggling.
 
 API (127.0.0.1:8090 only, never exposed to the network):
@@ -537,7 +537,7 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, default=8090)
-    ap.add_argument("--model", default="2507")
+    ap.add_argument("--model", default="8b")
     ap.add_argument("--no-autostart", action="store_true")
     args = ap.parse_args()
     print("QwenReplyHelper manager: http://127.0.0.1:%d (only local)" % args.port, flush=True)
@@ -554,7 +554,7 @@ def main():
         print("（技术原因：%s）" % e, flush=True)
         return
     if not args.no_autostart:
-        mid = ALIASES.get(args.model, "2507")
+        mid = ALIASES.get(args.model, "8b")
         print("Auto-starting default model %s ..." % MODELS[mid]["label"], flush=True)
         ok, msg = switch_to(mid)
         print(msg, flush=True)
