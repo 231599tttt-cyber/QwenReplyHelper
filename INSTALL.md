@@ -1,4 +1,10 @@
-# 安装和使用说明（1.2.5，三模型）
+# 安装和使用说明（1.7.15，三模型）
+
+## v1.7.15 注意：默认启动的是 8B，先下 8B 就行
+
+1.7.15 版开始，管理器和扩展默认启动的模型改成了 **8B（Qwen3-8B，约 5.03GB，端口 18082）**，它是三个模型里参数最大、推理和编程最强的那个。
+所以第一次用，先只下 8B 这一个模型文件就够了，不用三个全下。4B 那两个是备选，想换的时候再下。
+注意：8B 需要约 10GB 空闲内存，正常是 16GB 内存的电脑用，生成会比 4B 慢一截。
 
 ## 1.2.4 注意（端口被旧进程占着，不要同时开两个黑窗口）
 
@@ -30,10 +36,10 @@ start-manager.bat。新版管理器如果发现该端口已经有一个健康服
   - start-manager.bat / start-manager.sh（日常用，见第一步）
   - qwen-manager.py（管理器，不要删）
   - llama-server.exe（+ 同 release 文件夹里的 DLL，不要只复制 exe 一个文件）
-  - Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf（新模型，约 2.50GB）
-  - Qwen3.5-4B-Q4_K_M.gguf（旧 4B，约 3.01GB，想用旧模型才需要下）
-  - Qwen3-8B-Q4_K_M.gguf（8B，约 5.03GB，想用 8B 才需要下；带 Qwen_ 前缀、
+  - Qwen3-8B-Q4_K_M.gguf（8B，约 5.03GB，默认模型，先下这一个就行；带 Qwen_ 前缀、
     Q5_K_M 约 5.85GB、Q8_0 约 8.71GB 的文件也可以，管理器按 Q4→Q5→Q8 顺序找）
+  - Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf（4B，约 2.50GB，备选，想换 4B 时再下）
+  - Qwen3.5-4B-Q4_K_M.gguf（旧 4B，约 3.01GB，备选，想用旧模型时再下）
   - start-qwen.bat、start-qwen-35-4b.bat、start-qwen-8b.bat 等（备用脚本）
 
 浏览器默认下到“下载”文件夹的文件，要复制粘贴到上面这个文件夹里，不用重下。
@@ -47,7 +53,13 @@ start-manager.bat。新版管理器如果发现该端口已经有一个健康服
    macOS/Linux 放 `llama-server` 并 `chmod +x llama-server`）。
    注意：解压出来的同文件夹里的 DLL 文件（ggml、llama 等）要一起放在它旁边，
    缺了 DLL 服务会起不来。
-2. 从模型页面下载模型文件到本扩展文件夹（点文件名，再点 Download）：
+2. 从模型页面下载模型文件到本扩展文件夹（点文件名，再点 Download）。
+   **先只下 8B 就行**，8B 是三个模型里最强的一个，默认就是它；4B 那两个是备选，想换时再下：
+   - 8B 页面：https://huggingface.co/bartowski/Qwen_Qwen3-8B-GGUF/tree/main
+     镜像页面：https://hf-mirror.com/bartowski/Qwen_Qwen3-8B-GGUF/tree/main
+     推荐文件：Qwen3-8B-Q4_K_M.gguf，约 5.03GB（带 Qwen_ 前缀的同名文件也可以）。
+     备选：Q5_K_M 约 5.85GB，Q8_0 约 8.71GB，更大、更慢；8B 需要约 10GB 空闲内存，
+     正常是 16GB 内存的电脑用，生成会比 4B 慢一截。
    - 新模型页面：https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF/tree/main
      镜像页面：https://hf-mirror.com/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF/tree/main
      文件：Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf，约 2.50GB，
@@ -56,22 +68,17 @@ start-manager.bat。新版管理器如果发现该端口已经有一个健康服
      镜像页面：https://hf-mirror.com/bartowski/Qwen_Qwen3.5-4B-GGUF/tree/main
      文件：Qwen3.5-4B-Q4_K_M.gguf，约 3.01GB，
      SHA256：13c16f426047e2de38cd075bdade4a7bcbc8c774384876f677740cda65f8a983。
-   - 8B 页面：https://huggingface.co/bartowski/Qwen_Qwen3-8B-GGUF/tree/main
-     镜像页面：https://hf-mirror.com/bartowski/Qwen_Qwen3-8B-GGUF/tree/main
-     推荐文件：Qwen3-8B-Q4_K_M.gguf，约 5.03GB（带 Qwen_ 前缀的同名文件也可以）。
-     备选：Q5_K_M 约 5.85GB，Q8_0 约 8.71GB，更大、更慢；8B 需要约 10GB 空闲内存，
-     正常是 16GB 内存的电脑用，生成会比 4B 慢一截。
    - Windows 校验：`certutil -hashfile <文件名> SHA256`
    - macOS/Linux 校验：`shasum -a 256 <文件名>`
 3. 日常启动：
    - Windows：双击 `start-manager.bat`，保持黑窗口开着。
    - macOS/Linux：`sh start-manager.sh`，保持终端开着。
-   管理器会自动先起默认新模型（18080）。以后不用再管两个脚本。
+   管理器会自动先起默认模型 8B（18082）。以后不用再管两个脚本。
 4. 验证：
-   - 管理器：浏览器打开 http://127.0.0.1:8090/status ，能看到 current 是 2507 就是起来了。
-   - 新模型：打开 http://127.0.0.1:18080/health ，能返回内容即为已启动。
+   - 管理器：浏览器打开 http://127.0.0.1:8090/status ，能看到 current 是 8b 就是起来了。
+   - 8B：打开 http://127.0.0.1:18082/health ，能返回内容即为已启动。
+   - 新模型（切过去之后）：打开 http://127.0.0.1:18080/health 。
    - 旧模型（切过去之后）：打开 http://127.0.0.1:18081/health 。
-   - 8B（切过去之后）：打开 http://127.0.0.1:18082/health 。
    若扩展提示“管理器没在跑”，先检查这一步，不要先重装扩展。
 
 ## 二、备用启动（管理器没跑时才用）
@@ -88,7 +95,7 @@ start-manager.bat。新版管理器如果发现该端口已经有一个健康服
 2. 右上角打开「开发者模式」（Developer mode）。
 3. 点「加载已解压的扩展程序」（Load unpacked）。
 4. 选择本文件夹 `QwenReplyHelper`（不是 zip 文件本身，是解压后的文件夹）。
-5. 确认扩展列表里出现 QwenReplyHelper 1.2.5，且没有报错。
+5. 确认扩展列表里出现 QwenReplyHelper 1.7.15，且没有报错。
 
 ## 四、使用方法
 
@@ -99,8 +106,8 @@ start-manager.bat。新版管理器如果发现该端口已经有一个健康服
    一直在右下角，只有按住标题行拖动才会动，拖过的位置下次打开 X 还会记住。
 3. **第一次点击**：点击某条帖子的原生评论图标。
    扩展自动读取该条主帖、调用本地模型生成、填入 X 原生回复框，
-   同一个右下角工具条原地开始生成，不会跳到顶部中间：模型行（新模型 2.5GB /
-   旧 4B 3.01GB / 8B 5.03GB，默认新模型）+ 自然（默认）/ 幽默 / 简短 / 友好
+   同一个右下角工具条原地开始生成，不会跳到顶部中间：模型行（8B 5.03GB /
+   新模型 2.5GB / 旧 4B 3.01GB，默认 8B）+ 自然（默认）/ 幽默 / 简短 / 友好
    + 重新生成 + 状态。
 4. **切模型**：直接点工具条里的模型按钮，不用关黑窗口、不用再双击脚本。
    状态会显示“正在切换模型，请稍等…”，模型加载要十几秒到几十秒，
