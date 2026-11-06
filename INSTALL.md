@@ -30,7 +30,8 @@ start-manager.bat。新版管理器如果发现该端口已经有一个健康服
 ## 第零步：先把文件放对
 
 解压 `QwenReplyHelper.zip` 后得到 `QwenReplyHelper` 文件夹，放到桌面上。
-模型文件、llama-server、管理器都要在**这个文件夹的同一层，不要放子文件夹**：
+**下载的东西都要解压到这个文件夹里，全部放在同一层，不要放子文件夹，也不要各放各的文件夹：**
+模型文件、llama-server、管理器，下载后解压出来，都放进 `QwenReplyHelper` 文件夹的同一层。
 
 - QwenReplyHelper 文件夹
   - start-manager.bat / start-manager.sh（日常用，见第一步）
@@ -48,12 +49,13 @@ start-manager.bat。新版管理器如果发现该端口已经有一个健康服
 
 在你自己的电脑上操作，不需要 VPS，不需要云服务器。
 
-1. 从 llama.cpp 官方 release 下载对应你电脑系统的 `llama-server`
-   可执行文件，放到本扩展文件夹里（Windows 放 `llama-server.exe`，
+1. 从 llama.cpp 官方 release 下载对应你电脑系统的 `llama-server`：
+   下载地址：https://github.com/ggerganov/llama.cpp/releases
+   点开最新一个 release，下载对应你电脑系统的版本（Windows 下 `llama-*-bin-win-cpu-x64.zip` 这类带 win 的包）。
+   下载后解压，把解压出来的 `llama-server.exe` **和同文件夹里的全部 DLL 文件（ggml、llama 等）一起**放进本扩展文件夹 `QwenReplyHelper` 的同一层（Windows 放 `llama-server.exe`，
    macOS/Linux 放 `llama-server` 并 `chmod +x llama-server`）。
-   注意：解压出来的同文件夹里的 DLL 文件（ggml、llama 等）要一起放在它旁边，
-   缺了 DLL 服务会起不来。
-2. 从模型页面下载模型文件到本扩展文件夹（点文件名，再点 Download）。
+   注意：不要只复制 exe 一个文件，缺了 DLL 服务会起不来；也不要把它们放进子文件夹，必须跟模型文件、管理器的 qwen-manager.py 在同一层。
+2. 从模型页面下载模型文件（点文件名，再点 Download），下载后同样放进本扩展文件夹 `QwenReplyHelper` 的同一层，跟 llama-server.exe、管理器在同一层，不要放子文件夹。
    **先只下 8B 就行**，8B 是三个模型里最强的一个，默认就是它；4B 那两个是备选，想换时再下：
    - 8B 页面：https://huggingface.co/bartowski/Qwen_Qwen3-8B-GGUF/tree/main
      镜像页面：https://hf-mirror.com/bartowski/Qwen_Qwen3-8B-GGUF/tree/main
